@@ -1,0 +1,49 @@
+O sistema usa a api do mercado pago, você pode criar uma aplicação ou usar uma existente
+https://www.youtube.com/watch?v=Breblubtu-I&pp=ygUbbWVyY2FkbyBwYWdvIGRldmVsb3BlcnMgcGl4
+
+back end
+autenticação com hash e jwt
+criação de um novo pagamento
+envio da notificação de pagamento aprovado webhook
+
+
+1 - Clonar repositorio
+
+2 - importar schema do banco de dados no postgres
+
+Estrutura
+Front-end: jogos_v2 
+Back-end: webhook
+
+3 - instalar pacotes do npm
+cd webhook
+npm install
+
+4 - Editar variaveis de ambiente
+webhook/.env
+
+Obs: localhost
+
+5 - instalar o ngrok (opcional)
+Com o link gerado é preciso mudar a url da notificação no site do mercado pago
+
+6 - Inicializar api
+node app.js
+
+7 - abrir um tunel temporario na internet
+ngrok http 3000 ou porta da sua escolha
+enviar o url para o administrador da conta
+
+
+8 - Em outro terminal
+    1 - cd jogos_v2
+    2 - python -m venv .venv
+    3 - source .venv/bin/activate //comando para ativar o .venv no mac e no linux
+    3 - .venv/Scripts/activate //comando para ativar no linux
+    4 - pip install -r requirements.txt // instalar bibliotecas do projetos
+    5 - python main.py //arquivo principal que junta todas as telas
+
+9 . Ideias de melhoria
+O back foi implementado na tela de login e no jogo da roleta.
+Lógica simples: o front end envia uma cor(cor_cliente), o servidor gera uma cor aleatoria(cor_server), compara as duas
+
