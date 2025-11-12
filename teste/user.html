@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Teste WebSocket com Token</title>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <style>
+    body {
+      font-family: monospace;
+      background: #111;
+      color: #0f0;
+      padding: 20px;
+    }
+    input, button {
+      font-size: 16px;
+      padding: 5px 10px;
+      margin: 5px 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      background: #0f0;
+      color: #111;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    pre {
+      background: #000;
+      padding: 10px;
+      border: 1px solid #0f0;
+      height: 300px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <h2>🔗 Teste de WebSocket (Socket.IO)</h2>
+
+  <label for="token">Token JWT:</label>
+  <input type="text" id="token" placeholder="Cole seu token aqui...">
+
+  <button id="connectBtn">Conectar e Enviar Token</button>
+
+  <h3>📡 Log:</h3>
+  <pre id="log"></pre>
+
+  <script>
+    const logBox = document.getElementById("log");
+    const log = (msg) => {
+      logBox.textContent += msg + "\n";
+      logBox.scrollTop = logBox.scrollHeight;
+      console.log(msg);
+    };
+
+    let socket;
+
+    document.getElementById("connectBtn").addEventListener("click", () => {
+      const token = document.getElementById("token").value.trim();
+      if (!token) {
+        log("⚠️ Informe um token JWT antes de conectar.");
+        return;
+      }
+
+      // Cria conexão com o servidor
+      socket = io("http://localhost:3000", {
+        transports: ["websocket"], // força uso de WebSocket
+      });
+
+      socket.on("connect", () => {
+        log(`✅ Conectado ao servidor com socket.id: ${socket.id}`);
+
+        // Envia o token logo após conectar
+        log("🔑 Enviando token para autenticação...");
+        socket.emit("autenticar", token);
+      });
+
+      socket.on("autenticado", (data) => {
+        log(`🟢 Usuário autenticado! ID: ${data.userId}`);
+      });
+
+      socket.on("erro_autenticacao", (err) => {
+        log(`❌ Erro de autenticação: ${err.msg}`);
+      });
+
+      socket.on("atualizacao_pagamento", (data) => {
+        log(`💰 Atualização recebida:\n${JSON.stringify(data, null, 2)}`);
+      });
+
+      socket.on("disconnect", () => {
+        log("🔴 Desconectado do servidor");
+      });
+    });
+  </script>
+</body>
+</html>

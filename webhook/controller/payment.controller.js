@@ -1,5 +1,6 @@
 const { MercadoPagoConfig, Payment } = require('mercadopago');
 const pagamentoService = require('../service/pagamentos.service');
+const {emitEvento} = require('../websocket/crash.socket');
 const client = new MercadoPagoConfig({
     accessToken: process.env.MP_ACCESS_TOKEN,
     options: { timeout: 5000 }
@@ -104,6 +105,13 @@ async function webhook(req, res) {
         if (['approved', 'rejected', 'cancelled'].includes(status)) {
             processedPayments.add(paymentId);
             setTimeout(() => processedPayments.delete(paymentId), 60000);
+            // ✅ Envia atualização em tempo real
+    emitEvento('atualizacao_pagamento', {
+      paymentId: info.id,
+      status,
+      valor: info.transaction_amount,
+      email: info.payer?.email || null,
+    });
         }
 
         // 8️⃣ Ações conforme o status
