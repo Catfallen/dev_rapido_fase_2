@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cliente Crash WebSocket</title>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <style>
+    body {
+      background: #0a0a0a;
+      color: #e6e6e6;
+      font-family: Consolas, monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    input, button {
+      margin: 8px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: none;
+    }
+    input {
+      width: 350px;
+    }
+    #log {
+      margin-top: 20px;
+      width: 90%;
+      max-width: 800px;
+      height: 400px;
+      background: #111;
+      border: 1px solid #333;
+      padding: 10px;
+      overflow-y: auto;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h2>🎮 Cliente Crash WebSocket</h2>
+  
+  <input type="text" id="tokenInput" placeholder="Cole seu token JWT aqui" />
+  <button id="btnAutenticar">Autenticar</button>
+
+  <div id="log"></div>
+
+  <script>
+    const logDiv = document.getElementById("log");
+
+    // Função auxiliar para logar no painel
+    function log(msg, data = null) {
+      const el = document.createElement("div");
+      el.innerHTML = `<b>${new Date().toLocaleTimeString()}</b> - ${msg}`;
+      if (data) {
+        el.innerHTML += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+      }
+      logDiv.appendChild(el);
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+    // Conecta ao servidor WebSocket
+    const socket = io("http://localhost:3000");
+
+    socket.on("connect", () => log("🟢 Conectado ao servidor WebSocket"));
+
+    socket.on("disconnect", () => log("🔴 Desconectado do servidor"));
+
+    // Botão de autenticação
+    document.getElementById("btnAutenticar").addEventListener("click", () => {
+      const token = document.getElementById("tokenInput").value.trim();
+      if (token) {
+        socket.emit("autenticar", token);
+        log("📤 Token enviado para autenticação", { token });
+      } else {
+        alert("Insira um token JWT válido!");
+      }
+    });
+
+    // Eventos de autenticação
+    socket.on("autenticado", (data) => log("✅ Autenticado com sucesso!", data));
+    socket.on("erro_autenticacao", (data) => log("❌ Erro de autenticação", data));
+    socket.on("usuario_autenticado", (data) => log("👤 Usuário autenticado no servidor", data));
+
+    // ----------------------------
+    // 🎯 Eventos do jogo Crash
+    // ----------------------------
+    const eventosJogo = [
+      "round_start",
+      "cashout_all",
+      "clear_bets",
+      "state_change",
+      "multiplier_update",
+      "crash",
+      "auto_cashout",
+    ];
+
+    eventosJogo.forEach(evento => {
+      socket.on(evento, (dados) => {
+        log(`🎮 Evento recebido: ${evento}`, dados);
+      });
+    });
+  </script>
+</body>
+</html>

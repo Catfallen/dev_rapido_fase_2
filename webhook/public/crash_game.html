@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Crash Game</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+</head>
+<body class="bg-neutral-900 flex justify-center items-center min-h-screen text-white overflow-hidden">
+
+  <div class="bg-neutral-800 rounded-2xl shadow-2xl p-8 w-[500px] flex flex-col gap-10">
+
+    <!-- Parte superior: multiplicador e status -->
+    <div class="flex flex-col gap-10 flex-grow">
+      
+      <!-- Multiplicador -->
+      <div class="flex justify-center items-center h-[200px]">
+        <span id="multiplier_display" 
+              class="text-green-400 text-[6rem] font-bold drop-shadow-[0_0_6px_black] whitespace-nowrap">
+          1.00x
+        </span>
+      </div>
+
+      <!-- Status e Contagem -->
+      <div class="flex justify-between text-center">
+        <span id="round_status" class="text-gray-200 text-lg flex-1">
+          Aguardando...
+        </span>
+        <span id="countdown" class="text-orange-400 text-xl font-semibold flex-1">
+        </span>
+      </div>
+    </div>
+
+    <!-- Histórico (sem overflow, com quebra automática) -->
+    <div class="flex flex-wrap gap-4 p-2 justify-center" id="history_container">
+      <!-- Elementos de histórico serão inseridos aqui -->
+    </div>
+
+    <!-- Autenticação -->
+    <div class="flex flex-col gap-3 border-t border-gray-700 pt-4">
+      <input id="token_input" 
+             placeholder="Digite seu token JWT"
+             class="bg-neutral-700 text-sm p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-white" />
+      <button id="auth_button" 
+              class="bg-green-600 hover:bg-green-700 transition p-2 rounded-lg font-semibold">
+        Conectar
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    const socket = io("http://localhost:3000");
+
+    const tokenInput = document.getElementById("token_input");
+    const authButton = document.getElementById("auth_button");
+    const multiplierDisplay = document.getElementById("multiplier_display");
+    const roundStatus = document.getElementById("round_status");
+    const countdown = document.getElementById("countdown");
+    const historyContainer = document.getElementById("history_container");
+
+    authButton.onclick = () => {
+      const token = tokenInput.value.trim();
+      if (!token) return alert("Digite um token!");
+      socket.emit("autenticar", token);
+    };
+
+    socket.on("autenticado", ({ userId }) => {
+      alert(`Usuário autenticado: ${userId}`);
+    });
+
+    socket.on("erro_autenticacao", ({ msg }) => {
+      alert("Erro: " + msg);
+    });
+
+    socket.on("state_change", ({ state, countdown: tempo }) => {
+      roundStatus.textContent = state;
+      countdown.textContent = tempo !== undefined ? tempo : "";
+    });
+
+    socket.on("multiplier_update", ({ multiplier }) => {
+      multiplierDisplay.textContent = multiplier.toFixed(2) + "x";
+    });
+
+    socket.on("crash", ({ crashPoint }) => {
+      roundStatus.textContent = "💥 Crash em " + crashPoint.toFixed(2) + "x!";
+      multiplierDisplay.classList.add("text-red-500");
+      setTimeout(() => multiplierDisplay.classList.remove("text-red-500"), 1000);
+    });
+
+    socket.on("round_start", () => {
+      roundStatus.textContent = "Rodada iniciada!";
+      multiplierDisplay.textContent = "1.00x";
+    });
+
+    socket.on("cashout_all", (dados) => {
+      console.log("💸 Cashout recebido:", dados);
+    });
+
+    socket.on("auto_cashout", ({ ganhos }) => {
+      console.log("⚡ Auto cashout:", ganhos);
+    });
+
+    socket.on("history_update", ({ history }) => {
+      historyContainer.innerHTML = "";
+      history.slice().reverse().forEach(value => {
+        const el = document.createElement("div");
+        el.textContent = value.toFixed(2) + "x";
+        el.className = "px-3 py-1 rounded-lg text-sm font-semibold transition " +
+                       (value >= 2 ? "bg-green-600" : "bg-red-600");
+        historyContainer.appendChild(el);
+      });
+    });
+  </script>
+</body>
+</html>
