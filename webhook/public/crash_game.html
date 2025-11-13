@@ -36,21 +36,12 @@
       <!-- Elementos de histórico serão inseridos aqui -->
     </div>
 
-    <!-- Autenticação -->
-    <div class="flex flex-col gap-3 border-t border-gray-700 pt-4">
-      <input id="token_input" 
-             placeholder="Digite seu token JWT"
-             class="bg-neutral-700 text-sm p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-white" />
-      <button id="auth_button" 
-              class="bg-green-600 hover:bg-green-700 transition p-2 rounded-lg font-semibold">
-        Conectar
-      </button>
-    </div>
+    
 
   </div>
-
+  <script src="/api_url.js"></script>
   <script>
-    const socket = io("http://localhost:3000");
+    const socket = io(`${api_url}`);
 
     const tokenInput = document.getElementById("token_input");
     const authButton = document.getElementById("auth_button");
@@ -58,12 +49,17 @@
     const roundStatus = document.getElementById("round_status");
     const countdown = document.getElementById("countdown");
     const historyContainer = document.getElementById("history_container");
-
+    const token = sessionStorage.token;
+    /*
     authButton.onclick = () => {
       const token = tokenInput.value.trim();
       if (!token) return alert("Digite um token!");
       socket.emit("autenticar", token);
     };
+    */
+    window.addEventListener('load',()=>{
+      socket.emit('autenticar',token);
+    })
 
     socket.on("autenticado", ({ userId }) => {
       alert(`Usuário autenticado: ${userId}`);

@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
-    "register-webhook": "node register-webhook.js"
+    "register-webhook": "node register-webhook.js",
+    "dev": "nodemon app.js"
   },
   "keywords": [],
   "author": "",
@@ -18,7 +19,7 @@
     "jsonwebtoken": "^9.0.2",
     "mercadopago": "^2.9.0",
     "node-fetch": "^3.3.2",
-    "nodemon": "^3.1.10",
+    "nodemon": "^3.1.11",
     "pg": "^8.16.3",
     "socket.io": "^4.8.1",
     "ws": "^8.18.3"
