@@ -16,8 +16,7 @@ async function register({ nome, email, senha }) {
   const user = rows[0];
 
   // 3️⃣ Gerar token JWT
-  const token = generateToken({ id: user.id, email: user.email });
-
+  const token = generateToken({ id: user.id, email: user.email, nome:user.nome});
   // 4️⃣ Retornar usuário + token
   return { user, token };
 }
@@ -27,13 +26,14 @@ async function login({ email, senha }) {
   const query = 'SELECT * FROM usuario WHERE email = $1';
   const { rows } = await pool.query(query, [email]);
   const user = rows[0];
-
+  console.log('payload')
+  console.log(user);
   if (!user) throw new Error('Usuário não encontrado');
 
   const valid = await comparePassword(senha, user.senha);
   if (!valid) throw new Error('Senha incorreta');
 
-  const token = generateToken({ id: user.id, email: user.email });
+  const token = generateToken({ id: user.id, email: user.email, nome:user.nome});
   return { token, user: { id: user.id, email: user.email } };
 }
 

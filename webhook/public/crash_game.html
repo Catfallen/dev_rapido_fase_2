@@ -41,72 +41,82 @@
   </div>
   <script src="/api_url.js"></script>
   <script>
-    const socket = io(`${api_url}`);
+  const socket = io(`${api_url}`);
 
-    const tokenInput = document.getElementById("token_input");
-    const authButton = document.getElementById("auth_button");
-    const multiplierDisplay = document.getElementById("multiplier_display");
-    const roundStatus = document.getElementById("round_status");
-    const countdown = document.getElementById("countdown");
-    const historyContainer = document.getElementById("history_container");
-    const token = sessionStorage.token;
-    /*
-    authButton.onclick = () => {
-      const token = tokenInput.value.trim();
-      if (!token) return alert("Digite um token!");
-      socket.emit("autenticar", token);
-    };
-    */
-    window.addEventListener('load',()=>{
-      socket.emit('autenticar',token);
-    })
+  const tokenInput = document.getElementById("token_input");
+  const authButton = document.getElementById("auth_button");
+  const multiplierDisplay = document.getElementById("multiplier_display");
+  const roundStatus = document.getElementById("round_status");
+  const countdown = document.getElementById("countdown");
+  const historyContainer = document.getElementById("history_container");
+  const token = sessionStorage.token;
 
-    socket.on("autenticado", ({ userId }) => {
-      alert(`Usuário autenticado: ${userId}`);
-    });
+  window.addEventListener("load", () => {
+    socket.emit("autenticar", token);
+  });
 
-    socket.on("erro_autenticacao", ({ msg }) => {
-      alert("Erro: " + msg);
-    });
+  socket.on("autenticado", ({ userId }) => {
+    alert(`Usuário autenticado: ${userId}`);
+    // assim que autenticar, pede lista inicial de jogadores
+    socket.emit("players");
+  });
 
-    socket.on("state_change", ({ state, countdown: tempo }) => {
-      roundStatus.textContent = state;
-      countdown.textContent = tempo !== undefined ? tempo : "";
-    });
+  socket.on("erro_autenticacao", ({ msg }) => {
+    alert("Erro: " + msg);
+  });
 
-    socket.on("multiplier_update", ({ multiplier }) => {
-      multiplierDisplay.textContent = multiplier.toFixed(2) + "x";
-    });
+  socket.on("state_change", ({ state, countdown: tempo }) => {
+    roundStatus.textContent = state;
+    countdown.textContent = tempo !== undefined ? tempo : "";
+  });
 
-    socket.on("crash", ({ crashPoint }) => {
-      roundStatus.textContent = "💥 Crash em " + crashPoint.toFixed(2) + "x!";
-      multiplierDisplay.classList.add("text-red-500");
-      setTimeout(() => multiplierDisplay.classList.remove("text-red-500"), 1000);
-    });
+  socket.on("multiplier_update", ({ multiplier }) => {
+    multiplierDisplay.textContent = multiplier.toFixed(2) + "x";
+  });
 
-    socket.on("round_start", () => {
-      roundStatus.textContent = "Rodada iniciada!";
-      multiplierDisplay.textContent = "1.00x";
-    });
+  socket.on("crash", ({ crashPoint }) => {
+    roundStatus.textContent = "💥 Crash em " + crashPoint.toFixed(2) + "x!";
+    multiplierDisplay.classList.add("text-red-500");
+    setTimeout(() => multiplierDisplay.classList.remove("text-red-500"), 1000);
+  });
 
-    socket.on("cashout_all", (dados) => {
-      console.log("💸 Cashout recebido:", dados);
-    });
+  socket.on("round_start", () => {
+    roundStatus.textContent = "Rodada iniciada!";
+    multiplierDisplay.textContent = "1.00x";
+  });
 
-    socket.on("auto_cashout", ({ ganhos }) => {
-      console.log("⚡ Auto cashout:", ganhos);
-    });
+  socket.on("cashout_all", (dados) => {
+    console.log("💸 Cashout recebido:", dados);
+  });
 
-    socket.on("history_update", ({ history }) => {
-      historyContainer.innerHTML = "";
-      history.slice().reverse().forEach(value => {
+  socket.on("auto_cashout", ({ ganhos }) => {
+    console.log("⚡ Auto cashout:", ganhos);
+  });
+
+  socket.on("history_update", ({ history }) => {
+    historyContainer.innerHTML = "";
+    history
+      .slice()
+      .reverse()
+      .forEach((value) => {
         const el = document.createElement("div");
         el.textContent = value.toFixed(2) + "x";
-        el.className = "px-3 py-1 rounded-lg text-sm font-semibold transition " +
-                       (value >= 2 ? "bg-green-600" : "bg-red-600");
+        el.className =
+          "px-3 py-1 rounded-lg text-sm font-semibold transition " +
+          (value >= 2 ? "bg-green-600" : "bg-red-600");
         historyContainer.appendChild(el);
       });
-    });
-  </script>
+  });
+
+  // 👥 Recebe a lista de jogadores conectados
+  socket.on("lista_players", (lista) => {
+    console.log("👥 Jogadores conectados:", lista);
+  });
+
+  // 🔁 Atualiza a lista manualmente a cada 10 segundos (opcional)
+  setInterval(() => {
+    socket.emit("players");
+  }, 10000);
+</script>
 </body>
 </html>

@@ -15,19 +15,29 @@ function initWebSocket(server) {
   io.on("connection", (socket) => {
     console.log("🧠 Novo cliente conectado:", socket.id);
 
-    // 🔹 Autenticação via token JWT
+    // 🧩 Autenticação via token JWT
     socket.on("autenticar", (token) => {
       try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log(decoded);
         const userId = decoded.id;
-        socket.data.userId = userId;
-        userSocketMap.set(userId, socket.id);
 
-        console.log(`✅ Usuário ${userId} autenticado no socket ${socket.id}`);
+        // Armazena todos os dados do jogador
+        userSocketMap.set(userId, {
+          socketId: socket.id,
+          nome: decoded.nome,
+          email: decoded.email,
+        });
+
+        socket.data.userId = userId;
+        console.log(`✅ Usuário ${decoded.nome} (${userId}) autenticado no socket ${socket.id}`);
 
         socket.join(String(userId));
         socket.emit("autenticado", { userId });
         io.emit("usuario_autenticado", { userId });
+
+        // 🔁 Atualiza a lista de jogadores para todos
+        atualizarListaJogadores();
 
       } catch (err) {
         console.error("❌ Token inválido:", err.message);
@@ -36,7 +46,7 @@ function initWebSocket(server) {
       }
     });
 
-    // 🔹 Eventos do jogo que podem vir do cliente Python
+    // 🎮 Eventos do jogo
     const eventosJogo = [
       "round_start",
       "cashout_all",
@@ -45,27 +55,51 @@ function initWebSocket(server) {
       "multiplier_update",
       "crash",
       "auto_cashout",
-      "history_update"
+      "history_update",
     ];
-    
-    // 🔁 Repassa os eventos do jogo para todos os outros clientes conectados
+
     eventosJogo.forEach((evento) => {
       socket.on(evento, (dados) => {
         console.log(`📩 Evento '${evento}' recebido de ${socket.id}:`, dados);
-        // Reenvia para todos os outros clientes conectados (exceto o remetente)
         socket.broadcast.emit(evento, dados);
       });
     });
 
-    // 🔌 Quando o cliente desconecta
+    // 👥 Solicitação manual de jogadores conectados
+    socket.on("players", () => {
+      const jogadores = Array.from(userSocketMap.keys());
+      socket.emit("lista_players", jogadores);
+    });
+
+    // 🔌 Desconexão
     socket.on("disconnect", () => {
       const userId = socket.data.userId;
       if (userId && userSocketMap.get(userId) === socket.id) {
         userSocketMap.delete(userId);
         console.log(`🔌 Usuário ${userId} desconectado (${socket.id})`);
+        atualizarListaJogadores();
       }
     });
   });
+}
+
+/**
+ * 🧾 Atualiza a lista de jogadores para todos os clientes conectados
+ */
+function atualizarListaJogadores(destinoSocket = null) {
+  const lista = Array.from(userSocketMap.entries()).map(([id, info]) => ({
+    id,
+    nome: info.nome,
+    email: info.email,
+  }));
+
+  if (destinoSocket) {
+    destinoSocket.emit("lista_players", lista);
+  } else {
+    io.emit("lista_players", lista);
+  }
+
+  console.log("📜 Lista de jogadores conectados:", lista);
 }
 
 /**
@@ -82,7 +116,7 @@ function emitParaUsuario(userId, evento, dados) {
 }
 
 /**
- * 🌍 Envia um evento para todos os clientes conectados
+ * 🌍 Envia um evento global
  */
 function emitEvento(evento, dados) {
   if (io) {
