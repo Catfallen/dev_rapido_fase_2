@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crash Game - Controle de Aposta</title>
+    <style>
+        body {
+            overflow: auto;
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 110%;
+        }
+        .main-card {
+            background-color: #1a1a1a;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .winners-bar {
+            background-color: #2a2a2a;
+            border-radius: 15px;
+            padding: 15px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .game-layout {
+            display: flex;
+            gap: 25px;
+        }
+        .game-area {
+            flex: 0.7;
+            background-color: #2a2a2a;
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #cccccc;
+        }
+        .control-panel {
+            flex: 0.3;
+            background-color: #1e1e1e;
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .bet-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            height: 60px;
+        }
+        .bet-button {
+            flex: 0.2;
+            background-color: #cc3333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .bet-input {
+            flex: 0.6;
+            padding: 10px;
+            font-size: 20px;
+            text-align: center;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+        }
+        .preset-buttons {
+            display: flex;
+            gap: 12px;
+            height: 55px;
+        }
+        .preset-button {
+            flex: 1;
+            background-color: #555;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .preset-button.all {
+            background-color: #ffaa33;
+        }
+        .play-button {
+            height: 70px;
+            background-color: #33cc66;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .auto-cashout {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            height: 60px;
+        }
+        .auto-cashout-button {
+            flex: 0.2;
+            background-color: #cc3333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .auto-cashout-display {
+            flex: 0.4;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .auto-cashout-toggle {
+            flex: 0.2;
+            background-color: #666;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .label {
+            text-align: center;
+            font-size: 14px;
+            color: #cccccc;
+            margin: 0;
+        }
+        .balance, .total-bets {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #33cc66;
+            margin: 0;
+        }
+        .bets-list {
+            flex: 1;
+            background-color: #2a2a2a;
+            border-radius: 5px;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        .bets-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .bets-list li {
+            background-color: #333;
+            margin-bottom: 8px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            height: 65px;
+        }
+        .action-button {
+            flex: 1;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .cashout-button {
+            background-color: #33cc66;
+            color: white;
+        }
+        .clear-button {
+            background-color: #cc3333;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-card">
+        <div class="winners-bar">
+            <!-- Barra de vencedores (placeholder) -->
+            <p>Barra de Vencedores</p>
+        </div>
+        <div class="game-layout">
+            <div class="game-area">
+                <iframe width="100%" height="100%" src="./crash_game.html" frameborder="0"></iframe>
+            </div>
+            <div class="control-panel">
+                <!-- Controles de aposta -->
+                <div class="bet-controls">
+                    <button class="bet-button" onclick="decreaseBet()">-</button>
+                    <input type="number" id="betAmount" class="bet-input" value="10" min="0" step="0.01">
+                    <button class="bet-button" onclick="increaseBet()">+</button>
+                </div>
+                <!-- Botões pré-definidos -->
+                <div class="preset-buttons">
+                    <button class="preset-button" onclick="setBet(10)">10</button>
+                    <button class="preset-button" onclick="setBet(15)">15</button>
+                    <button class="preset-button" onclick="setBet(100)">100</button>
+                    <button class="preset-button all" onclick="setBet('all')">ALL</button>
+                </div>
+                <!-- Botão Jogar -->
+                <button class="play-button" onclick="playGame()">JOGAR</button>
+                <!-- Auto Cashout (simplificado) -->
+                <div class="auto-cashout">
+                    <button class="auto-cashout-button" onclick="decreaseAutoCashout()">-</button>
+                    <div class="auto-cashout-display" id="autoCashoutValue">1.0</div>
+                    <button class="auto-cashout-button" onclick="increaseAutoCashout()">+</button>
+                    <button class="auto-cashout-toggle" id="autoCashoutToggle" onclick="toggleAutoCashout()">OFF</button>
+                </div>
+                <p class="label">auto cashout</p>
+                <p class="balance" id="balance">Saldo: R$ 1000.00</p>
+                <p class="total-bets" id="totalBets">Apostas: R$ 0.00</p>
+                <!-- Lista de apostas -->
+                <div class="bets-list">
+                    <ul id="betsList">
+                        <!-- Itens de apostas serão adicionados aqui -->
+                    </ul>
+                </div>
+                <!-- Botões de ação -->
+                <div class="action-buttons">
+                    <button class="action-button cashout-button" onclick="cashoutAll()">RETIRAR TUDO</button>
+                    <button class="action-button clear-button" onclick="clearBets()">LIMPAR APOSTAS</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let betAmount = 10;
+        let autoCashoutValue = 1.0;
+        let autoCashoutEnabled = false;
+        let balance = 1000.00;
+        let totalBets = 0.00;
+
+        function updateBetInput() {
+            document.getElementById('betAmount').value = betAmount;
+        }
+
+        function decreaseBet() {
+            if (betAmount > 0) {
+                betAmount -= 1;
+                updateBetInput();
+            }
+        }
+
+        function increaseBet() {
+            betAmount += 1;
+            updateBetInput();
+        }
+
+        function setBet(value) {
+            if (value === 'all') {
+                betAmount = balance;
+            } else {
+                betAmount = value;
+            }
+            updateBetInput();
+        }
+
+        function playGame() {
+            // Lógica para jogar (placeholder)
+            alert('Jogo iniciado com aposta de R$ ' + betAmount);
+            totalBets += betAmount;
+            document.getElementById('totalBets').textContent = 'Apostas: R$ ' + totalBets.toFixed(2);
+            // Adicionar à lista de apostas
+            const betsList = document.getElementById('betsList');
+            const li = document.createElement('li');
+            li.textContent = 'Aposta: R$ ' + betAmount;
+            betsList.appendChild(li);
+        }
+
+        function decreaseAutoCashout() {
+            if (autoCashoutEnabled && autoCashoutValue > 1.0) {
+                autoCashoutValue -= 0.1;
+                document.getElementById('autoCashoutValue').textContent = autoCashoutValue.toFixed(1);
+            }
+        }
+
+        function increaseAutoCashout() {
+            if (autoCashoutEnabled) {
+                autoCashoutValue += 0.1;
+                document.getElementById('autoCashoutValue').textContent = autoCashoutValue.toFixed(1);
+            }
+        }
+
+        function toggleAutoCashout() {
+            autoCashoutEnabled = !autoCashoutEnabled;
+            document.getElementById('autoCashoutToggle').textContent = autoCashoutEnabled ? 'ON' : 'OFF';
+        }
+
+        function cashoutAll() {
+            // Lógica para retirar tudo (placeholder)
+            alert('Retirando tudo!');
+        }
+
+        function clearBets() {
+            // Lógica para limpar apostas (placeholder)
+            document.getElementById('betsList').innerHTML = '';
+            totalBets = 0.00;
+            document.getElementById('totalBets').textContent = 'Apostas: R$ 0.00';
+        }
+    </script>
+</body>
+</html>

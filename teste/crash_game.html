@@ -6,7 +6,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 </head>
-<body class="bg-neutral-900 flex justify-center items-center h-screen text-white">
+<body class="bg-neutral-900 flex justify-center items-center min-h-screen text-white overflow-hidden">
 
   <div class="bg-neutral-800 rounded-2xl shadow-2xl p-8 w-[500px] flex flex-col gap-10">
 
@@ -16,7 +16,7 @@
       <!-- Multiplicador -->
       <div class="flex justify-center items-center h-[200px]">
         <span id="multiplier_display" 
-              class="text-green-400 text-[6rem] font-bold drop-shadow-[0_0_6px_black]">
+              class="text-green-400 text-[6rem] font-bold drop-shadow-[0_0_6px_black] whitespace-nowrap">
           1.00x
         </span>
       </div>
@@ -31,11 +31,9 @@
       </div>
     </div>
 
-    <!-- Histórico -->
-    <div class="overflow-x-auto flex gap-4 p-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
-      <div id="history_container" class="flex gap-4">
-        <!-- Elementos de histórico serão inseridos aqui -->
-      </div>
+    <!-- Histórico (sem overflow, com quebra automática) -->
+    <div class="flex flex-wrap gap-4 p-2 justify-center" id="history_container">
+      <!-- Elementos de histórico serão inseridos aqui -->
     </div>
 
     <!-- Autenticação -->
@@ -52,7 +50,7 @@
   </div>
 
   <script>
-    const socket = io("http://localhost:3000"); // ajuste a URL se necessário
+    const socket = io("http://localhost:3000");
 
     const tokenInput = document.getElementById("token_input");
     const authButton = document.getElementById("auth_button");
@@ -61,7 +59,6 @@
     const countdown = document.getElementById("countdown");
     const historyContainer = document.getElementById("history_container");
 
-    // Envia o token para autenticação
     authButton.onclick = () => {
       const token = tokenInput.value.trim();
       if (!token) return alert("Digite um token!");
@@ -76,7 +73,6 @@
       alert("Erro: " + msg);
     });
 
-    // === Eventos do jogo ===
     socket.on("state_change", ({ state, countdown: tempo }) => {
       roundStatus.textContent = state;
       countdown.textContent = tempo !== undefined ? tempo : "";
@@ -105,10 +101,8 @@
       console.log("⚡ Auto cashout:", ganhos);
     });
 
-    // === Novo evento: history_update ===
     socket.on("history_update", ({ history }) => {
-      historyContainer.innerHTML = ""; // limpa antes de recriar
-
+      historyContainer.innerHTML = "";
       history.slice().reverse().forEach(value => {
         const el = document.createElement("div");
         el.textContent = value.toFixed(2) + "x";

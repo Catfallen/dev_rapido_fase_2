@@ -47,7 +47,7 @@ function initWebSocket(server) {
       "auto_cashout",
       "history_update"
     ];
-
+    
     // 🔁 Repassa os eventos do jogo para todos os outros clientes conectados
     eventosJogo.forEach((evento) => {
       socket.on(evento, (dados) => {
