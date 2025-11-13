@@ -1,0 +1,138 @@
+# bet/layouts/over_under.kv
+
+#:include layouts/games/over_under_area.kv
+
+<OverUnderScreen>:
+    name: 'over_under' # Nome da tela
+    
+    MDCard:
+        orientation: 'vertical'
+        padding: '25dp'
+        spacing: '25dp'
+        md_bg_color: 0.08, 0.08, 0.08, 1
+        
+        # Botão para voltar ao Menu
+        MDRaisedButton:
+            text: "Voltar ao Menu"
+            size_hint_y: None
+            height: '40dp'
+            on_release: app.root.current = 'selection'
+        
+        MDBoxLayout:
+            orientation: 'horizontal'
+            spacing: '25dp'
+            
+            # Área do Jogo (Esquerda)
+            OverUnderArea:
+                id: game_area
+                size_hint_x: 0.7
+                screen: root # Passa a referência da tela para a área
+            
+            # Painel de Apostas (Direita) - IDÊNTICO ao do Crash
+            MDCard:
+                size_hint_x: 0.3
+                padding: '25dp'
+                md_bg_color: 0.10, 0.10, 0.10, 1
+                elevation: 8
+                radius: [18]
+                
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    spacing: '20dp'
+                    
+                    # Campo de Valor
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        size_hint_y: None
+                        height: '60dp'
+                        spacing: '12dp'
+                        MDRaisedButton:
+                            text: '-'
+                            size_hint_x: 0.2
+                            on_release: root.decrease_bet_amount()
+                        MDTextField:
+                            id: bet_amount_input
+                            text: str(int(root.bet_amount))
+                            input_filter: "float"
+                            size_hint_x: 0.6
+                            on_text_validate: root.on_bet_amount_validate()
+                            on_focus: root.on_bet_amount_focus(self, self.focus)
+                        MDRaisedButton:
+                            text: '+'
+                            size_hint_x: 0.2
+                            on_release: root.increase_bet_amount()
+                    
+                    # Botões de Valor Rápido
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        size_hint_y: None
+                        height: '55dp'
+                        spacing: '12dp'
+                        MDRaisedButton:
+                            text: '10'
+                            size_hint_x: 0.25
+                            on_release: root.set_bet_amount(10)
+                        MDRaisedButton:
+                            text: '15'
+                            size_hint_x: 0.25
+                            on_release: root.set_bet_amount(15)
+                        MDRaisedButton:
+                            text: '100'
+                            size_hint_x: 0.25
+                            on_release: root.set_bet_amount(100)
+                        MDRaisedButton:
+                            text: 'ALL'
+                            size_hint_x: 0.25
+                            on_release: root.set_bet_amount('all')
+                    
+                    # Botão "JOGAR" (Desabilitado)
+                    MDRaisedButton:
+                        id: bet_button
+                        text: 'USE OS BOTÕES DO JOGO'
+                        size_hint_y: None
+                        height: '70dp'
+                        md_bg_color: 0.5, 0.5, 0.5, 1
+                        disabled: True
+                        on_release: root.add_bet() # Vai mostrar o snackbar
+                    
+                    # Painel Auto-Cashout (Será escondido)
+                    MDBoxLayout:
+                        id: auto_cashout_box
+                        orientation: 'vertical'
+                        # ... (o .py vai esconder isso) ...
+                    
+                    # Saldo
+                    MDLabel:
+                        id: balance_label
+                        text: 'Saldo: R$ 1000.00'
+                        font_size: '28sp'
+                        halign: 'center'
+                        size_hint_y: None
+                        height: '40dp'
+                    
+                    # Total Apostado (não usado)
+                    MDLabel:
+                        id: total_bets_label
+                        text: 'Apostas: R$ 0.00'
+                        size_hint_y: None  # <--- Remove do cálculo de layout
+                        height: '0dp'      # <--- Força a altura para 0 (com 'dp')
+                        opacity: 0         # <--- ADICIONE/MODIFIQUE ESTA LINHA
+                        padding: 0
+
+                    ScrollView:
+                        size_hint_y: 1
+                        MDList:
+                            id: bets_list
+                    
+                    # Botões de Cashout (não usados)
+                    MDBoxLayout:
+                        size_hint_y: None
+                        height: '65dp'
+                        MDRaisedButton:
+                            id: cashout_btn
+                            disabled: True
+                            opacity: 0
+                        MDRaisedButton:
+                            id: clear_bets_btn
+                            disabled: True
+                            opacity: 0

@@ -1,0 +1,72 @@
+<CrashGameArea@MDCard>:
+    orientation: 'vertical'
+    padding: '30dp'
+    spacing: '25dp'
+    md_bg_color: 0.10, 0.10, 0.10, 1
+    elevation: 8
+    radius: [18]
+    
+    MDBoxLayout:
+        orientation: 'vertical'
+        size_hint_y: 0.8
+        spacing: '25dp'
+        
+        MDBoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: 0.7
+            
+            MDLabel:
+                id: multiplier_display
+                text: '1.00x'
+                theme_text_color: 'Custom'
+                text_color: 0.2, 0.8, 0.4, 1
+                font_size: '160sp'
+                halign: 'center'
+                valign: 'center'
+                size_hint_x: 1.0
+                bold: True
+                outline_width: 6
+                outline_color: 0, 0, 0, 1
+        
+        MDBoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: 0.3
+            
+            MDLabel:
+                id: round_status
+                text: 'Aguardando...'
+                theme_text_color: 'Custom'
+                text_color: 0.9, 0.9, 0.9, 1
+                font_size: '18sp'
+                halign: 'center'
+                valign: 'center'
+                size_hint_x: 0.5
+            
+            MDLabel:
+                id: countdown
+                text: ''
+                theme_text_color: 'Custom'
+                text_color: 1.0, 0.6, 0.2, 1
+                font_size: '20sp'
+                bold: True
+                halign: 'center'
+                valign: 'center'
+                size_hint_x: 0.5
+    
+    ScrollView:
+        id: history_scroll
+        size_hint_y: 0.2
+        do_scroll_x: True
+        do_scroll_y: False
+        scroll_type: ['bars']
+        bar_width: 8
+        
+        MDBoxLayout:
+            id: history_container
+            orientation: 'horizontal'
+            size_hint_x: None
+            width: self.minimum_width
+            padding: '15dp'
+            spacing: '15dp'
+            halign: 'right'
+            valign: 'center'

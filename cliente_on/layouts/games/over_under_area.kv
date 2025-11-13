@@ -1,0 +1,70 @@
+# bet/layouts/games/over_under_area.kv
+
+<OverUnderArea@MDCard>:
+    orientation: 'vertical'
+    padding: '30dp'
+    spacing: '25dp'
+    md_bg_color: 0.10, 0.10, 0.10, 1
+    elevation: 8
+    radius: [18]
+
+    # ÁREA DO HISTÓRICO (no topo)
+    ScrollView:
+        id: history_scroll
+        size_hint_y: 0.2
+        do_scroll_x: True
+        do_scroll_y: False
+        
+        MDBoxLayout:
+            id: history_container
+            orientation: 'horizontal'
+            size_hint_x: None
+            width: self.minimum_width
+            padding: '15dp'
+            spacing: '15dp'
+
+    # ÁREA DOS DADOS (centro)
+    MDBoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: 0.6
+        spacing: '20dp'
+        padding: '50dp'
+        
+        Image:
+            id: dice_1
+            source: 'assets/dice_1.png'
+            allow_stretch: True
+            nocache: True
+            
+        Image:
+            id: dice_2
+            source: 'assets/dice_1.png'
+            allow_stretch: True
+            nocache: True
+
+    # ÁREA DOS BOTÕES DE APOSTA (embaixo)
+    MDBoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: 0.2
+        spacing: '15dp'
+        
+        MDRaisedButton:
+            text: "MENOR QUE 7\n(Paga 2x)"
+            size_hint: 1, 1
+            md_bg_color: 0.8, 0.2, 0.2, 1
+            font_size: '18sp'
+            on_release: root.screen.place_bet('under')
+
+        MDRaisedButton:
+            text: "IGUAL A 7\n(Paga 5x)"
+            size_hint: 1, 1
+            md_bg_color: 1.0, 0.6, 0.2, 1
+            font_size: '18sp'
+            on_release: root.screen.place_bet('seven')
+
+        MDRaisedButton:
+            text: "MAIOR A 7\n(Paga 2x)"
+            size_hint: 1, 1
+            md_bg_color: 0.2, 0.8, 0.4, 1
+            font_size: '18sp'
+            on_release: root.screen.place_bet('over')

@@ -1,0 +1,237 @@
+#:include layouts/games/crash_game_area.kv
+
+<CrashGameScreen>:
+    name: 'crash'
+    
+    MDCard:
+        orientation: 'vertical'
+        padding: '25dp'
+        spacing: '25dp'
+        md_bg_color: 0.08, 0.08, 0.08, 1
+        elevation: 12
+        radius: [20]
+        
+        MDRaisedButton:
+            text: "Voltar ao Menu"
+            size_hint_y: None
+            height: '40dp'
+            on_release: app.root.current = 'selection'
+
+        MDCard:
+            id: winners_bar
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: '80dp'
+            padding: '15dp'
+            spacing: '15dp'
+            halign: 'center'
+            valign: 'center'
+            md_bg_color: 0.12, 0.12, 0.12, 1
+            elevation: 6
+            radius: [15]
+        
+        MDBoxLayout:
+            orientation: 'horizontal'
+            spacing: '25dp'
+            
+            CrashGameArea:
+                id: game_area
+                size_hint_x: 0.7
+            
+            MDCard:
+                size_hint_x: 0.3
+                padding: '25dp'
+                md_bg_color: 0.10, 0.10, 0.10, 1
+                elevation: 8
+                radius: [18]
+                
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    spacing: '20dp'
+                    
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        size_hint_y: None
+                        height: '60dp'
+                        spacing: '12dp'
+                        
+                        MDRaisedButton:
+                            text: '-'
+                            size_hint_x: 0.2
+                            md_bg_color: 0.8, 0.2, 0.2, 1
+                            font_size: '24sp'
+                            elevation: 4
+                            on_release: root.decrease_bet_amount()
+                        
+                        MDTextField:
+                            id: bet_amount_input
+                            text: str(int(root.bet_amount))
+                            hint_text: "Valor da aposta"
+                            input_filter: "float"
+                            multiline: False
+                            size_hint_x: 0.6
+                            font_size: '20sp'
+                            on_text_validate: root.on_bet_amount_validate()
+                            on_focus: root.on_bet_amount_focus(self, self.focus)
+                        
+                        MDRaisedButton:
+                            text: '+'
+                            size_hint_x: 0.2
+                            md_bg_color: 0.2, 0.8, 0.4, 1
+                            font_size: '24sp'
+                            elevation: 4
+                            on_release: root.increase_bet_amount()
+                    
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        size_hint_y: None
+                        height: '55dp'
+                        spacing: '12dp'
+                        
+                        MDRaisedButton:
+                            text: '10'
+                            size_hint_x: 0.25
+                            md_bg_color: 0.3, 0.3, 0.3, 1
+                            elevation: 3
+                            on_release: root.set_bet_amount(10)
+                        
+                        MDRaisedButton:
+                            text: '15'
+                            size_hint_x: 0.25
+                            md_bg_color: 0.3, 0.3, 0.3, 1
+                            elevation: 3
+                            on_release: root.set_bet_amount(15)
+                        
+                        MDRaisedButton:
+                            text: '100'
+                            size_hint_x: 0.25
+                            md_bg_color: 0.3, 0.3, 0.3, 1
+                            elevation: 3
+                            on_release: root.set_bet_amount(100)
+                        
+                        MDRaisedButton:
+                            text: 'ALL'
+                            size_hint_x: 0.25
+                            md_bg_color: 1.0, 0.6, 0.2, 1
+                            elevation: 3
+                            on_release: root.set_bet_amount('all')
+                    
+                    MDRaisedButton:
+                        id: bet_button
+                        text: 'JOGAR'
+                        size_hint_y: None
+                        height: '70dp'
+                        md_bg_color: 0.2, 0.8, 0.4, 1
+                        elevation: 8
+                        font_size: '20sp'
+                        bold: True
+                        on_release: root.add_bet()
+                    
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        size_hint_y: None
+                        height: '60dp'
+                        spacing: '12dp'
+                        
+                        MDRaisedButton:
+                            text: '-'
+                            size_hint_x: 0.2
+                            md_bg_color: 0.8, 0.2, 0.2, 1
+                            font_size: '24sp'
+                            elevation: 4
+                            disabled: not root.auto_cashout_enabled
+                            on_release: root.decrease_auto_cashout()
+                        
+                        MDLabel:
+                            id: auto_cashout_display
+                            text: f'{root.auto_cashout_value:.1f}'
+                            theme_text_color: 'Custom'
+                            text_color: 1, 1, 1, 1
+                            font_size: '28sp'
+                            bold: True
+                            halign: 'center'
+                            valign: 'center'
+                            size_hint_x: 0.4
+                        
+                        MDRaisedButton:
+                            text: '+'
+                            size_hint_x: 0.2
+                            md_bg_color: 0.2, 0.8, 0.4, 1
+                            font_size: '24sp'
+                            elevation: 4
+                            disabled: not root.auto_cashout_enabled
+                            on_release: root.increase_auto_cashout()
+                        
+                        MDRaisedButton:
+                            id: auto_cashout_checkbox
+                            text: 'ON' if root.auto_cashout_enabled else 'OFF'
+                            size_hint_x: 0.2
+                            md_bg_color: 0.4, 0.4, 0.4, 1
+                            elevation: 3
+                            on_release: root.toggle_auto_cashout()
+                    
+                    MDLabel:
+                        text: 'auto cashout'
+                        theme_text_color: 'Custom'
+                        text_color: 0.7, 0.7, 0.7, 1
+                        font_size: '14sp'
+                        halign: 'center'
+                        size_hint_y: None
+                        height: '35dp'
+                    
+                    MDLabel:
+                        id: balance_label
+                        text: 'Saldo: R$ 1000.00'
+                        theme_text_color: 'Custom'
+                        text_color: 0.2, 0.8, 0.4, 1
+                        font_size: '16sp'
+                        bold: True
+                        halign: 'center'
+                        size_hint_y: None
+                        height: '40dp'
+                    
+                    MDLabel:
+                        id: total_bets_label
+                        text: 'Apostas: R$ 0.00'
+                        theme_text_color: 'Custom'
+                        text_color: 0.2, 0.8, 0.4, 1
+                        font_size: '16sp'
+                        bold: True
+                        halign: 'center'
+                        size_hint_y: None
+                        height: '40dp'
+                    
+                    ScrollView:
+                        size_hint_y: 1
+                        
+                        MDList:
+                            id: bets_list
+                            spacing: '8dp'
+                    
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        spacing: '12dp'
+                        size_hint_y: None
+                        height: '65dp'
+                        
+                        MDRaisedButton:
+                            id: cashout_btn
+                            text: 'RETIRAR TUDO'
+                            size_hint_x: 0.5
+                            md_bg_color: 0.2, 0.8, 0.4, 1
+                            elevation: 6
+                            font_size: '16sp'
+                            bold: True
+                            disabled: True
+                            on_release: root.cashout_all()
+                        
+                        MDRaisedButton:
+                            id: clear_bets_btn
+                            text: 'LIMPAR APOSTAS'
+                            size_hint_x: 0.5
+                            md_bg_color: 0.8, 0.2, 0.2, 1
+                            elevation: 6
+                            font_size: '16sp'
+                            bold: True
+                            disabled: True
+                            on_release: root.clear_bets()

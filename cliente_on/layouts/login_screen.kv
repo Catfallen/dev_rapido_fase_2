@@ -1,0 +1,51 @@
+<LoginScreen>:
+    name: 'login_screen'
+    
+    MDBoxLayout:
+        orientation: 'vertical'
+        padding: dp(20)
+        spacing: dp(10)
+        
+        MDLabel:
+            text: 'Login / Registro'
+            halign: 'center'
+            font_style: 'H5'
+            size_hint_y: None
+            height: dp(50)
+        
+        MDTextField:
+            id: nome
+            hint_text: 'Nome (para registro)'
+            helper_text: 'Opcional para login'
+            helper_text_mode: 'on_focus'
+            size_hint_y: None
+            height: dp(50)
+        
+        MDTextField:
+            id: email
+            hint_text: 'Email'
+            helper_text: 'Digite seu email'
+            helper_text_mode: 'on_focus'
+            size_hint_y: None
+            height: dp(50)
+        
+        MDTextField:
+            id: senha
+            hint_text: 'Senha'
+            helper_text: 'Digite sua senha'
+            helper_text_mode: 'on_focus'
+            password: True
+            size_hint_y: None
+            height: dp(50)
+        
+        MDRaisedButton:
+            text: 'Login'
+            size_hint_y: None
+            height: dp(50)
+            on_release: root.login()
+        
+        MDRaisedButton:
+            text: 'Registrar'
+            size_hint_y: None
+            height: dp(50)
+            on_release: root.register()
