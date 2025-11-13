@@ -62,9 +62,9 @@ class CrashGame(BaseGame):
         self._flying_start_time = 0
 
     # 🔹 Método auxiliar para emitir eventos via socket
-    def _emit(self, event, data):
+    def _emit(self, event, data = None, callback = None):
         if sio.connected:
-            sio.emit(event, data)
+            sio.emit(event, data or {},callback = callback)
         else:
             print(f"⚠️ Socket não conectado — evento ignorado: {event}")
 
@@ -178,7 +178,7 @@ class CrashGame(BaseGame):
             return random.uniform(1.0, 2.0)
         elif rand < 0.80:
             return random.uniform(2.0, 5.0)
-        elif rand < 0.99:
+        elif rand < 0.95:
             return random.uniform(5.0, 10.0)
         else:
             return random.uniform(10.0, 50.0)
@@ -238,3 +238,11 @@ class CrashGame(BaseGame):
         elif self.state == GameState.CRASHED:
             return f"CRASH em {self.crash_multiplier:.2f}x!"
         return ""
+    @sio.on('lista_players')
+    def receber_lista_players(jogadores):
+        print("👥 Jogadores recebidos:", jogadores)
+
+        # Atualiza o CrashGame ativo
+        if CrashGame._instancia_atual:
+            CrashGame._instancia_atual.names = jogadores
+            print("✅ CrashGame.names atualizado")

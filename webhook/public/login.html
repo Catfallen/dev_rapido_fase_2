@@ -104,7 +104,9 @@
 
                 if (response.ok) {
                     const data = await response.json();
+                    console.log(data);
                     sessionStorage.setItem('token', data.token);
+                    console.log(localStorage.getItem('token'))
                     alert('Login bem-sucedido! Token armazenado.');
                     // Aqui você pode redirecionar ou fazer algo após o login
                     window.location.href = `${api_url}/public/game/crash`
@@ -139,9 +141,11 @@
                 if (response.ok) {
                     const data = await response.json();
                     sessionStorage.setItem('token', data.token);
+                    console.log(sessionStorage.getItem('token'))
+                    console.log(data);
                     alert('Registro bem-sucedido! Token armazenado.');
                     // Aqui você pode redirecionar ou fazer algo após o registro
-                    window.location.href = `${api_url}/public/game/crash`
+                    //window.location.href = `${api_url}/public/game/crash`
                   } else {
                     alert('Erro no registro.');
                 }

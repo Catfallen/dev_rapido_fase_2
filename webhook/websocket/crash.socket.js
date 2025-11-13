@@ -66,7 +66,7 @@ function initWebSocket(server) {
     });
 
     // 👥 Solicitação manual de jogadores conectados
-    socket.on("players", () => {
+    socket.on("players", (callback) => {
       const jogadores = Array.from(userSocketMap.keys());
       socket.emit("lista_players", jogadores);
     });

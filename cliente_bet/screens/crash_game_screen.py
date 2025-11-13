@@ -8,31 +8,34 @@ import random
 
 
 class CrashGameScreen(BaseGameScreen):
-    
+    _instancia_atual = None
     def __init__(self, **kwargs):
         crash_game = CrashGame()
         game_manager = GameManager()
         game_manager.register_game('crash', crash_game)
         game_manager.set_current_game('crash')
-        
-        self.game_area = None
+
         super().__init__(crash_game, **kwargs)
-        
+        CrashGameScreen._instancia_atual = self
+        self.names = ['teste']
+
+        # Associa callbacks
         self.game.on_round_start = self.on_round_start
         self.game.on_multiplier_update = self.on_multiplier_update
         self.game.on_crash = self.on_crash
         self.game.on_auto_cashout = self.on_auto_cashout
         self.game.on_state_change = self.on_game_state_change
-        
-        self.names = [
-            "An***ymous", "Pl***er", "Ga***r", "Lu***y", "Wi***r",
-            "Cr***h", "Be***r", "Fa***t", "Bi***n", "Ac***e",
-            "Ph***x", "Sh***w", "Vo***x", "Bl***e", "Ti***n",
-            "Sp***e", "Ro***e", "Ze***h", "No***a", "St***r",
-            "An***us", "Us***r", "Pl***r", "Ga***r", "Wi***r"
-        ]
-        
-        self.start_new_round(0)
+
+        # 🔹 Emite uma vez para preencher a lista de players logo no início
+        def handle_players_inicial(jogadores):
+            print("Jogadores iniciais recebidos:", jogadores)
+            self.names = jogadores
+
+        # aguarda socket conectar antes de emitir
+        Clock.schedule_once(lambda dt: self._emit_inicial(handle_players_inicial), 1)
+
+        # só inicia o round e o update de tela depois
+        Clock.schedule_once(lambda dt: self.start_new_round(0), 2)
         Clock.schedule_interval(self.update_winners_display, 3)
     
     def on_kv_post(self, base_widget):
@@ -100,7 +103,17 @@ class CrashGameScreen(BaseGameScreen):
                 Clock.schedule_once(lambda dt: setattr(history_scroll, 'scroll_x', 0), 0.1)
     
     def on_round_start(self):
-        self.animate_countdown()
+        print("Round start CrashGameScreen")
+
+        # Callback que será chamado quando o servidor responder
+        #def handle_players(jogadores):
+        #    print("Jogadores recebidos:", jogadores)
+        #    self.names = jogadores
+        #    self.update_winners_display()  # Atualiza a interface, se quiser
+
+        # Envia o evento para o servidor e espera o callback
+        #self.game._emit("players", {}, callback=handle_players)
+        print(self.names)
     
     def on_multiplier_update(self, multiplier):
         pass

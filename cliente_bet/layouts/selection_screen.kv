@@ -1,0 +1,98 @@
+# bet/layouts/selection_screen.kv
+
+<SelectionScreen>:
+    name: 'selection'
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        padding: '50dp'
+        spacing: '30dp'
+        md_bg_color: 0.08, 0.08, 0.08, 1
+        
+        MDLabel:
+            text: "Selecione um Jogo"
+            halign: 'center'
+            font_style: 'H3'
+            adaptive_height: True
+
+        MDBoxLayout:
+            orientation: 'horizontal'
+            spacing: '30dp'
+            adaptive_height: True
+            pos_hint: {'center_y': 0.5}
+
+            # Botão para o Jogo CRASH
+            MDCard:
+                orientation: 'vertical'
+                size_hint: 0.5, None
+                height: "200dp"
+                padding: '15dp'
+                md_bg_color: 0.12, 0.12, 0.12, 1
+                elevation: 8
+                radius: [15]
+                ripple_behavior: True
+                on_release: root.go_to_game('crash')
+
+                # --- MUDANÇA AQUI PARA O ÍCONE E TEXTO SEPARADOS ---
+                MDIcon:
+                    icon: "airplane" # Ícone do aviãozinho
+                    pos_hint: {'center_x': 0.5}
+                    halign: 'center'
+                    font_size: "60sp"
+                    theme_text_color: "Custom"
+                    text_color: app.theme_cls.primary_color # Cor verde primária do tema
+
+                    size_hint_y: None
+                    height: self.font_size
+
+                MDLabel:
+                    text: "Crash" # Sem emoji
+                    pos_hint: {'center_x': 0.5} # <--- ADICIONE ESTA LINHA
+                    adaptive_height: True
+                    halign: 'center'
+                    font_style: 'H4'
+                    color: 1, 1, 1, 1 # Branco
+                # --- FIM DA MUDANÇA ---
+                
+                MDLabel:
+                    text: "O clássico jogo do aviãozinho. Retire antes do crash!"
+                    halign: 'center'
+                    theme_text_color: 'Secondary'
+            
+            # Botão para o Jogo OVER/UNDER
+            MDCard:
+                orientation: 'vertical'
+                size_hint: 0.5, None
+                height: "200dp"
+                padding: '15dp'
+                md_bg_color: 0.12, 0.12, 0.12, 1
+                elevation: 8
+                radius: [15]
+                ripple_behavior: True
+                on_release: root.go_to_game('over_under')
+
+                # --- MUDANÇA AQUI PARA O ÍCONE E TEXTO SEPARADOS ---
+                MDIcon:
+                    icon: "dice-multiple" # Ícone de dados
+                    pos_hint: {'center_x': 0.5}
+                    halign: 'center'
+                    font_size: "60sp"
+                    theme_text_color: "Custom"
+                    text_color: app.theme_cls.primary_color # Cor verde primária do tema
+
+                    size_hint_y: None
+                    height: self.font_size
+
+                MDLabel:
+                    text: "Over/Under 7" # Sem emoji
+                    pos_hint: {'center_x': 0.5} # <--- ADICIONE ESTA LINHA
+                    adaptive_height: True
+                    halign: 'center'
+                    font_style: 'H4'
+                    color: 1, 1, 1, 1 # Branco
+                # --- FIM DA MUDANÇA ---
+                
+                MDLabel:
+                    text: "Aposte na soma de dois dados. Maior, menor ou igual a 7."
+                    halign: 'center'
+                    theme_text_color: 'Secondary'
