@@ -45,6 +45,7 @@ function initWebSocket(server) {
       "multiplier_update",
       "crash",
       "auto_cashout",
+      "history_update"
     ];
 
     // 🔁 Repassa os eventos do jogo para todos os outros clientes conectados

@@ -1,0 +1,64 @@
+<CrashApp>:
+    MDFloatLayout:
+        md_bg_color: 0.1, 0.1, 0.1, 1
+
+        MDCard:
+            orientation: "vertical"
+            size_hint: None, None
+            size: "500dp", "600dp"
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            md_bg_color: 0.15, 0.15, 0.15, 1
+            padding: "20dp"
+            radius: [20]
+
+            MDBoxLayout:
+                orientation: "vertical"
+                spacing: "20dp"
+                size_hint_y: 0.8
+
+                # Multiplicador
+                MDBoxLayout:
+                    size_hint_y: 0.5
+                    MDLabel:
+                        id: multiplier_label
+                        text: app.multiplier
+                        halign: "center"
+                        theme_text_color: "Custom"
+                        text_color: 0, 1, 0, 1
+                        font_style: "H2"
+
+                # Status e contagem
+                MDBoxLayout:
+                    spacing: "10dp"
+                    MDLabel:
+                        text: app.status
+                        halign: "center"
+                        theme_text_color: "Secondary"
+                    MDLabel:
+                        text: app.countdown
+                        halign: "center"
+                        theme_text_color: "Custom"
+                        text_color: 1, 0.5, 0, 1
+
+            ScrollView:
+                size_hint_y: 0.2
+                do_scroll_y: False
+                MDBoxLayout:
+                    id: history_box
+                    orientation: "horizontal"
+                    spacing: "10dp"
+                    adaptive_width: True
+                    padding: "10dp"
+
+            MDBoxLayout:
+                orientation: "vertical"
+                spacing: "10dp"
+                MDTextField:
+                    id: token_input
+                    hint_text: "Digite seu token JWT"
+                    mode: "rectangle"
+                MDRaisedButton:
+                    text: "Conectar"
+                    md_bg_color: 0, 1, 0, 1
+                    on_release:
+                        app.conectar(token_input.text)
